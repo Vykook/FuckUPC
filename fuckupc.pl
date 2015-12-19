@@ -2,19 +2,19 @@
 
 use strict;
 use warnings;
-use Net::Ping;
-use Data::Dumper;
+use Net::Ping::External qw(ping);
 
 my $ModemIP = '192.168.100.1';
 my $RemoteIP = '8.8.8.8';
 my $Sleep = 5*60;
-
-
-
-my $local = `ping -c 1 192.168.1.23; echo $?`;
-print $local;
-
+my $File = 'upc.csv';
 while () {
-    print "ahoj\n";
+    my $ModemStatus  = ping(host => $ModemIP);
+    my $RemoteStatus = ping(host => $RemoteIP);
+    my $CurrentTime  = localtime;
+
+    open FH,'>>', $File;
+    print FH "\"$RemoteStatus\", \"$ModemStatus\", \"$CurrentTime\"\n";
+    close FH;
     sleep $Sleep;
 }
